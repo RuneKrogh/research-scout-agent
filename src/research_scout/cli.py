@@ -45,7 +45,6 @@ def format_answer(answer: ResearchAnswer) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Find a research paper matching a request.")
     parser.add_argument("request", help="e.g. 'a RAG paper before 2021 with >500 citations'")
-    parser.add_argument("--model", help="PydanticAI model string, overrides RESEARCH_SCOUT_MODEL")
     parser.add_argument("--json", action="store_true", help="print the structured answer as JSON")
     args = parser.parse_args()
 
@@ -53,7 +52,7 @@ def main() -> None:
     os.environ.setdefault("PYDANTIC_AI_NO_BANNER", "1")
     from research_scout.agent import research
 
-    answer = asyncio.run(research(args.request, model=args.model))
+    answer = asyncio.run(research(args.request))
     print(answer.model_dump_json(indent=2) if args.json else format_answer(answer))
 
 

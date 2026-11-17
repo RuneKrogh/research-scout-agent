@@ -3,14 +3,9 @@
 import os
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Literal
 
-from google.genai.types import HttpRetryOptions
 from pydantic_ai import Agent, ModelRetry, RunContext
 from pydantic_ai.models import Model
-from pydantic_ai.models.fallback import FallbackModel
-from pydantic_ai.models.google import GoogleModel
-from pydantic_ai.providers.google import GoogleProvider
 
 from research_scout.models import (
     AgentDecision,
@@ -19,11 +14,10 @@ from research_scout.models import (
     ResearchAnswer,
     SearchConstraints,
 )
-from research_scout.openalex import OpenAlexClient, OpenAlexError
+from research_scout.openalex import OpenAlexClient, OpenAlexError, SortOrder
 
-# Tried in order. Flash-Lite is used because the free-tier Flash models were often
-# overloaded (HTTP 503 or hanging requests) during development.
-DEFAULT_MODELS = "google:gemini-3.5-flash-lite,google:gemini-3.1-flash-lite"
+# Flash-Lite: the free-tier Flash models were often overloaded during development.
+DEFAULT_MODEL = "google:gemini-3.5-flash-lite"
 MAX_SEARCHES = 4
 CANDIDATES_PER_SEARCH = 10
 ABSTRACT_PREVIEW_CHARS = 600
@@ -84,27 +78,9 @@ def _candidate_view(paper: Paper) -> dict:
     }
 
 
-def _make_model(name: str) -> Model | str:
-    if name.startswith("google:"):
-        # Fail fast on overload so the next model in the fallback chain is tried quickly,
-        # instead of the SDK's long default retry loop.
-        provider = GoogleProvider(
-            retry_options=HttpRetryOptions(attempts=2, initial_delay=1.0, max_delay=4.0)
-        )
-        return GoogleModel(name.removeprefix("google:"), provider=provider)
-    return name
-
-
-def resolve_model(spec: str | None = None) -> Model | str:
-    """Comma-separated model strings become a FallbackModel, tried in order."""
-    spec = spec or os.getenv("RESEARCH_SCOUT_MODEL") or DEFAULT_MODELS
-    models = [_make_model(name.strip()) for name in spec.split(",") if name.strip()]
-    return models[0] if len(models) == 1 else FallbackModel(*models)
-
-
 def build_agent(model: Model | str | None = None) -> Agent[ResearchDeps, AgentDecision]:
     agent = Agent(
-        model if isinstance(model, Model) else resolve_model(model),
+        model or os.getenv("RESEARCH_SCOUT_MODEL") or DEFAULT_MODEL,
         deps_type=ResearchDeps,
         output_type=AgentDecision,
         retries=2,
@@ -119,7 +95,7 @@ def build_agent(model: Model | str | None = None) -> Agent[ResearchDeps, AgentDe
     async def search_papers(
         ctx: RunContext[ResearchDeps],
         constraints: SearchConstraints,
-        sort: Literal["relevance", "citations"] = "relevance",
+        sort: SortOrder = "relevance",
     ) -> dict:
         """Search OpenAlex for papers on a topic that satisfy the year and citation constraints.
 
@@ -176,7 +152,6 @@ def to_answer(decision: AgentDecision, deps: ResearchDeps) -> ResearchAnswer:
     """Build the final answer; all paper metadata comes from the tool results."""
     paper = deps.seen.get(decision.selected_paper_id) if decision.selected_paper_id else None
     return ResearchAnswer(
-        found=paper is not None,
         paper=PaperResult.from_paper(paper) if paper else None,
         explanation=decision.explanation,
         uncertainty=decision.uncertainty,
@@ -185,12 +160,12 @@ def to_answer(decision: AgentDecision, deps: ResearchDeps) -> ResearchAnswer:
     )
 
 
-async def research(query: str, model: Model | str | None = None) -> ResearchAnswer:
+async def research(query: str) -> ResearchAnswer:
     """Run the agent on one user request."""
     client = OpenAlexClient()
     deps = ResearchDeps(client=client)
     try:
-        result = await build_agent(model).run(query, deps=deps)
+        result = await build_agent().run(query, deps=deps)
     finally:
         await client.aclose()
     return to_answer(result.output, deps)

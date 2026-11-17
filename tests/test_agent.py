@@ -65,9 +65,8 @@ async def test_happy_path_uses_tool_metadata():
     result = await build_agent(scripted("W-good")).run("query", deps=deps)
     answer = to_answer(result.output, deps)
 
-    assert client.calls[0]["year_after"] == 2022
+    assert client.calls[0]["min_year"] == 2023
     assert client.calls[0]["min_citations"] == 100
-    assert answer.found
     assert answer.paper.citation_count == 500
     assert answer.paper.citation_source == "OpenAlex"
     assert answer.tool_calls == 1
@@ -104,5 +103,4 @@ async def test_no_match_returns_not_found():
     deps = ResearchDeps(client=FakeClient([]))
     result = await build_agent(scripted(None)).run("query", deps=deps)
     answer = to_answer(result.output, deps)
-    assert not answer.found
     assert answer.paper is None
