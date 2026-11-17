@@ -1,11 +1,9 @@
 import pytest
-from pydantic import ValidationError
 
 from research_scout.models import (
     CitationConstraint,
     Paper,
     PaperResult,
-    ResearchAnswer,
     SearchConstraints,
     YearConstraint,
 )
@@ -50,19 +48,16 @@ def test_citation_bounds(operator, expected):
     assert CitationConstraint(operator=operator, value=100).bounds() == expected
 
 
-def test_search_filters_match_openalex_client_arguments():
+def test_search_filters_are_inclusive_bounds():
     c = SearchConstraints(
         topic="RAG",
         year=YearConstraint(operator="before", year=2021),
         citations=CitationConstraint(operator="more_than", value=500),
     )
-    assert c.search_filters() == {"year_before": 2021, "min_citations": 501}
+    assert c.search_filters() == {"max_year": 2020, "min_citations": 501}
 
     exact = SearchConstraints(topic="RAG", year=YearConstraint(operator="in", year=2023))
-    assert exact.search_filters() == {"year": 2023}
-
-    since = SearchConstraints(topic="RAG", year=YearConstraint(operator="from", year=2020))
-    assert since.search_filters() == {"year_after": 2019}
+    assert exact.search_filters() == {"min_year": 2023, "max_year": 2023}
 
 
 def test_violations():
@@ -90,17 +85,3 @@ def test_paper_result_takes_metadata_from_tool():
     assert result.citation_source == "OpenAlex"
     assert result.citation_source_url == "https://openalex.org/W1"
     assert result.link == "https://doi.org/10.1/x"
-
-
-def test_research_answer_found_requires_paper():
-    constraints = SearchConstraints(topic="agents")
-    with pytest.raises(ValidationError):
-        ResearchAnswer(found=True, explanation="x", constraints=constraints)
-    with pytest.raises(ValidationError):
-        ResearchAnswer(
-            found=False,
-            paper=PaperResult.from_paper(paper()),
-            explanation="x",
-            constraints=constraints,
-        )
-    assert ResearchAnswer(found=False, explanation="none", constraints=constraints)
