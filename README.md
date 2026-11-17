@@ -29,7 +29,7 @@ uv run research-scout "Find a paper about retrieval-augmented generation publish
 
 ## LLM choice
 
-Gemini 3.5 Flash-Lite through Google AI Studio's free tier. It supports tool calling and structured output, which the agent depends on. I started with Gemini Flash, but it was frequently overloaded on the free tier, while Flash-Lite responded in a few seconds with good results.
+Gemini 3.5 Flash-Lite through Google AI Studio's free tier. It supports tool calling and structured output, which the agent depends on. I started with Gemini Flash, but it was frequently overloaded on the free tier, while Flash-Lite responded in a few seconds with good results. The free tier has per-minute and per-day request limits, but one request uses only 2-3 model calls, so even a full evaluation run stays well within them.
 
 ## Evaluation
 
