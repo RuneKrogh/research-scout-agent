@@ -10,12 +10,11 @@ import httpx
 from research_scout.models import Paper
 
 BASE_URL = "https://api.openalex.org"
-MAX_PER_PAGE = 100
-ABSTRACT_MAX_CHARS = 1500
 SELECT_FIELDS = (
     "id,doi,title,publication_year,cited_by_count,authorships,primary_location,"
     "abstract_inverted_index"
 )
+MAX_RETRIES = 2
 
 SortOrder = Literal["relevance", "citations"]
 
@@ -26,24 +25,17 @@ class OpenAlexError(RuntimeError):
 
 def build_filter(
     *,
-    year: int | None = None,
-    year_after: int | None = None,
-    year_before: int | None = None,
+    min_year: int | None = None,
+    max_year: int | None = None,
     min_citations: int | None = None,
     max_citations: int | None = None,
 ) -> str:
-    """Build an OpenAlex filter string.
-
-    Year bounds are exclusive (after 2022 means 2023 or later). Citation bounds are
-    inclusive (at least 100 means 100 or more).
-    """
-    parts: list[str] = []
-    if year is not None:
-        parts.append(f"publication_year:{year}")
-    if year_after is not None:
-        parts.append(f"publication_year:>{year_after}")
-    if year_before is not None:
-        parts.append(f"publication_year:<{year_before}")
+    """Build an OpenAlex filter string from inclusive bounds."""
+    parts = []
+    if min_year is not None:
+        parts.append(f"publication_year:>{min_year - 1}")
+    if max_year is not None:
+        parts.append(f"publication_year:<{max_year + 1}")
     if min_citations is not None:
         parts.append(f"cited_by_count:>{min_citations - 1}")
     if max_citations is not None:
@@ -56,10 +48,7 @@ def reconstruct_abstract(inverted_index: dict[str, list[int]] | None) -> str | N
     if not inverted_index:
         return None
     positions = {pos: word for word, idxs in inverted_index.items() for pos in idxs}
-    text = " ".join(positions[i] for i in sorted(positions))
-    if len(text) > ABSTRACT_MAX_CHARS:
-        text = text[:ABSTRACT_MAX_CHARS].rsplit(" ", 1)[0] + " ..."
-    return text
+    return " ".join(positions[i] for i in sorted(positions))
 
 
 def parse_work(work: dict) -> Paper:
@@ -81,40 +70,22 @@ def parse_work(work: dict) -> Paper:
     )
 
 
-def _title_key(title: str) -> str:
-    return re.sub(r"[^a-z0-9]", "", title.lower())
-
-
 def deduplicate(papers: list[Paper]) -> list[Paper]:
-    """Merge versions of the same paper (e.g. preprint and proceedings).
-
-    Keeps the first occurrence's position and the highest citation count's record.
-    """
+    """Merge versions of the same paper (e.g. preprint and proceedings), keeping the most cited."""
     best: dict[str, Paper] = {}
-    order: list[str] = []
     for paper in papers:
-        key = _title_key(paper.title)
-        if key not in best:
-            order.append(key)
+        key = re.sub(r"[^a-z0-9]", "", paper.title.lower())
+        if key not in best or (paper.citation_count or 0) > (best[key].citation_count or 0):
             best[key] = paper
-        elif (paper.citation_count or 0) > (best[key].citation_count or 0):
-            best[key] = paper
-    return [best[k] for k in order]
+    return list(best.values())
 
 
 class OpenAlexClient:
     """Async client for searching OpenAlex works."""
 
-    def __init__(
-        self,
-        api_key: str | None = None,
-        http_client: httpx.AsyncClient | None = None,
-        timeout: float = 20.0,
-        max_retries: int = 2,
-    ) -> None:
+    def __init__(self, api_key: str | None = None) -> None:
         self.api_key = api_key if api_key is not None else os.getenv("OPENALEX_API_KEY")
-        self._http = http_client or httpx.AsyncClient(base_url=BASE_URL, timeout=timeout)
-        self.max_retries = max_retries
+        self._http = httpx.AsyncClient(base_url=BASE_URL, timeout=20)
 
     async def aclose(self) -> None:
         await self._http.aclose()
@@ -123,26 +94,22 @@ class OpenAlexClient:
         self,
         query: str,
         *,
-        year: int | None = None,
-        year_after: int | None = None,
-        year_before: int | None = None,
+        min_year: int | None = None,
+        max_year: int | None = None,
         min_citations: int | None = None,
         max_citations: int | None = None,
         sort: SortOrder = "relevance",
         limit: int = 10,
     ) -> list[Paper]:
-        """Search works by topic in title and abstract, with optional filters."""
-        if not query.strip():
-            raise ValueError("query must not be empty")
+        """Search works by topic in title and abstract, with optional inclusive bounds."""
         params: dict[str, str | int] = {
             "search.title_and_abstract": query,
             "select": SELECT_FIELDS,
-            "per_page": max(1, min(limit, MAX_PER_PAGE)),
+            "per_page": limit,
         }
         filters = build_filter(
-            year=year,
-            year_after=year_after,
-            year_before=year_before,
+            min_year=min_year,
+            max_year=max_year,
             min_citations=min_citations,
             max_citations=max_citations,
         )
@@ -157,21 +124,21 @@ class OpenAlexClient:
         return deduplicate([parse_work(w) for w in data.get("results", [])])
 
     async def _get(self, path: str, params: dict) -> dict:
-        for attempt in range(self.max_retries + 1):
+        """GET with retries on network errors, rate limits (429) and server errors."""
+        for attempt in range(MAX_RETRIES + 1):
+            last = attempt == MAX_RETRIES
             try:
                 response = await self._http.get(path, params=params)
             except httpx.HTTPError as exc:
-                if attempt == self.max_retries:
+                if last:
                     raise OpenAlexError(f"OpenAlex request failed: {exc}") from exc
-                await asyncio.sleep(2**attempt)
-                continue
-            if response.status_code == 429 or response.status_code >= 500:
-                if attempt == self.max_retries:
-                    break
-                retry_after = response.headers.get("Retry-After", "")
-                await asyncio.sleep(float(retry_after) if retry_after.isdigit() else 2**attempt)
-                continue
-            if response.is_error:
-                raise OpenAlexError(f"OpenAlex error {response.status_code}: {response.text[:300]}")
-            return response.json()
-        raise OpenAlexError(f"OpenAlex error {response.status_code} after retries")
+            else:
+                retryable = response.status_code == 429 or response.status_code >= 500
+                if not response.is_error:
+                    return response.json()
+                if last or not retryable:
+                    raise OpenAlexError(
+                        f"OpenAlex error {response.status_code}: {response.text[:300]}"
+                    )
+            await asyncio.sleep(2**attempt)
+        raise AssertionError("unreachable")

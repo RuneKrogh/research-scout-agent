@@ -33,14 +33,13 @@ def anyio_backend():
     return "asyncio"
 
 
-def test_build_filter_year_and_citations():
-    assert build_filter(year_after=2022, min_citations=100) == (
+def test_build_filter_uses_inclusive_bounds():
+    assert build_filter(min_year=2023, min_citations=100) == (
         "publication_year:>2022,cited_by_count:>99"
     )
-    assert build_filter(year_before=2021, max_citations=500) == (
+    assert build_filter(max_year=2020, max_citations=500) == (
         "publication_year:<2021,cited_by_count:<501"
     )
-    assert build_filter(year=2023) == "publication_year:2023"
     assert build_filter() == ""
 
 
@@ -81,7 +80,7 @@ async def test_search_works_sends_filters_and_parses():
     )
     client = OpenAlexClient(api_key="key")
     papers = await client.search_works(
-        "retrieval augmented generation", year_before=2021, min_citations=500, sort="citations"
+        "retrieval augmented generation", max_year=2020, min_citations=500, sort="citations"
     )
     await client.aclose()
 
@@ -115,12 +114,4 @@ async def test_search_works_retries_on_rate_limit(monkeypatch):
     )
     client = OpenAlexClient(api_key="")
     assert await client.search_works("agents") == []
-    await client.aclose()
-
-
-@pytest.mark.anyio
-async def test_search_works_rejects_empty_query():
-    client = OpenAlexClient(api_key="")
-    with pytest.raises(ValueError):
-        await client.search_works("  ")
     await client.aclose()
