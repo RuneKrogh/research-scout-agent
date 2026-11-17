@@ -1,0 +1,36 @@
+[project]
+name = "research-scout"
+version = "0.1.0"
+description = "PydanticAI research agent that finds and verifies research papers against topic, year and citation constraints."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.1",
+    "pydantic>=2.14.3",
+    "pydantic-ai-slim[google,groq]>=2.69.0",
+    "python-dotenv>=1.2.4",
+]
+
+[project.scripts]
+research-scout = "research_scout.cli:main"
+
+[build-system]
+requires = ["uv_build>=0.13.8,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "respx>=0.23.1",
+    "ruff>=0.17.5",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
