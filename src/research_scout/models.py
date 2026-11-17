@@ -1,6 +1,10 @@
 """Data models shared by the search tool and the agent."""
 
-from pydantic import BaseModel, Field
+from typing import Literal
+
+from pydantic import BaseModel, Field, model_validator
+
+APPROX_TOLERANCE = 0.2
 
 
 class Paper(BaseModel):
@@ -23,3 +27,166 @@ class Paper(BaseModel):
     def link(self) -> str:
         """Best available link to the paper."""
         return self.doi or self.url or self.openalex_id
+
+
+class YearConstraint(BaseModel):
+    """Publication-year constraint, e.g. 'after 2022' -> operator='after', year=2022."""
+
+    operator: Literal["before", "after", "in", "from", "until"] = Field(
+        description=(
+            "before: < year, after: > year, in: = year, from/since: >= year, until/up to: <= year"
+        )
+    )
+    year: int = Field(ge=1900, le=2100)
+
+    def bounds(self) -> tuple[int | None, int | None]:
+        """Inclusive (min, max) year bounds."""
+        match self.operator:
+            case "before":
+                return None, self.year - 1
+            case "after":
+                return self.year + 1, None
+            case "in":
+                return self.year, self.year
+            case "from":
+                return self.year, None
+            case "until":
+                return None, self.year
+
+
+class CitationConstraint(BaseModel):
+    """Citation-count constraint, e.g. 'more than 500' -> operator='more_than', value=500."""
+
+    operator: Literal["at_least", "more_than", "at_most", "less_than", "approximately"]
+    value: int = Field(ge=0)
+
+    def bounds(self) -> tuple[int | None, int | None]:
+        """Inclusive (min, max) citation bounds. 'approximately' allows +/- 20 %."""
+        match self.operator:
+            case "at_least":
+                return self.value, None
+            case "more_than":
+                return self.value + 1, None
+            case "at_most":
+                return None, self.value
+            case "less_than":
+                return None, max(self.value - 1, 0)
+            case "approximately":
+                delta = round(self.value * APPROX_TOLERANCE)
+                return max(self.value - delta, 0), self.value + delta
+
+
+class SearchConstraints(BaseModel):
+    """Constraints the LLM extracts from the user's request."""
+
+    topic: str = Field(min_length=2, description="Research topic as a short search query")
+    year: YearConstraint | None = None
+    citations: CitationConstraint | None = None
+    assumptions: list[str] = Field(
+        default_factory=list,
+        description="How vague parts of the request were interpreted, e.g. 'recent' -> 2023+",
+    )
+
+    def search_filters(self) -> dict[str, int]:
+        """Keyword arguments for OpenAlexClient.search_works."""
+        filters: dict[str, int] = {}
+        if self.year:
+            low, high = self.year.bounds()
+            if low is not None and low == high:
+                filters["year"] = low
+            else:
+                if low is not None:
+                    filters["year_after"] = low - 1
+                if high is not None:
+                    filters["year_before"] = high + 1
+        if self.citations:
+            low, high = self.citations.bounds()
+            if low is not None:
+                filters["min_citations"] = low
+            if high is not None:
+                filters["max_citations"] = high
+        return filters
+
+    def violations(self, paper: Paper) -> list[str]:
+        """Return the constraints the paper does not satisfy (empty list = all satisfied)."""
+        problems: list[str] = []
+        if self.year:
+            low, high = self.year.bounds()
+            if paper.year is None:
+                problems.append("publication year unknown")
+            elif (low is not None and paper.year < low) or (high is not None and paper.year > high):
+                problems.append(f"year {paper.year} is not {self.year.operator} {self.year.year}")
+        if self.citations:
+            low, high = self.citations.bounds()
+            count = paper.citation_count
+            if count is None:
+                problems.append("citation count unknown")
+            elif (low is not None and count < low) or (high is not None and count > high):
+                problems.append(
+                    f"{count} citations is not {self.citations.operator.replace('_', ' ')} "
+                    f"{self.citations.value}"
+                )
+        return problems
+
+
+class AgentDecision(BaseModel):
+    """What the LLM returns: a choice among tool results, never paper metadata itself.
+
+    Title, authors, year and citation count are filled in by code from the tool results,
+    so the LLM cannot invent or alter them.
+    """
+
+    constraints: SearchConstraints
+    selected_paper_id: str | None = Field(
+        default=None,
+        description="openalex_id of the chosen paper from the search results, or null if "
+        "no paper satisfies the request",
+    )
+    explanation: str = Field(
+        description="Why the paper matches the request, or why no paper was found. Follow "
+        "any format the user asked for (e.g. a 5-7 sentence summary)."
+    )
+    uncertainty: str | None = Field(
+        default=None, description="Anything uncertain about the match or the interpretation"
+    )
+
+
+class PaperResult(BaseModel):
+    """The selected paper, with metadata taken from the tool."""
+
+    title: str
+    authors: list[str]
+    year: int | None
+    citation_count: int | None
+    citation_source: str = Field(description="Where the citation count comes from")
+    citation_source_url: str = Field(description="Record the citation count was read from")
+    link: str
+
+    @classmethod
+    def from_paper(cls, paper: Paper) -> "PaperResult":
+        return cls(
+            title=paper.title,
+            authors=paper.authors,
+            year=paper.year,
+            citation_count=paper.citation_count,
+            citation_source="OpenAlex",
+            citation_source_url=paper.openalex_id,
+            link=paper.link,
+        )
+
+
+class ResearchAnswer(BaseModel):
+    """Final structured answer returned to the user."""
+
+    found: bool
+    paper: PaperResult | None = None
+    explanation: str
+    uncertainty: str | None = None
+    constraints: SearchConstraints
+    tool_calls: int = 0
+
+    @model_validator(mode="after")
+    def _paper_matches_found(self) -> "ResearchAnswer":
+        if self.found != (self.paper is not None):
+            raise ValueError("found must be true exactly when a paper is given")
+        return self
