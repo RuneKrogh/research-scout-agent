@@ -18,9 +18,6 @@ wheels/
 .pytest_cache/
 .ruff_cache/
 
-# Evaluation raw run logs (summaries are committed in eval/results/)
-eval/runs/
-
 # Editors / OS
 .vscode/
 .idea/
