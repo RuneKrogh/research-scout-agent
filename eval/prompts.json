@@ -1,0 +1,106 @@
+[
+  {
+    "id": 1,
+    "category": "broad topic, after year, min citations",
+    "prompt": "Find a research paper about LLM agents for software engineering that was published after 2022 and has at least 100 citations. Explain why the paper is relevant.",
+    "year": {"operator": "after", "year": 2022},
+    "citations": {"operator": "at_least", "value": 100},
+    "expect_found": true
+  },
+  {
+    "id": 2,
+    "category": "before year, min citations",
+    "prompt": "Find a paper about retrieval-augmented generation published before 2021 with more than 500 citations. Summarize its contribution in 5-7 sentences.",
+    "year": {"operator": "before", "year": 2021},
+    "citations": {"operator": "more_than", "value": 500},
+    "expect_found": true
+  },
+  {
+    "id": 3,
+    "category": "exact year, min citations",
+    "prompt": "Find a paper on graph neural networks published in 2019 with at least 1000 citations.",
+    "year": {"operator": "in", "year": 2019},
+    "citations": {"operator": "at_least", "value": 1000},
+    "expect_found": true
+  },
+  {
+    "id": 4,
+    "category": "narrow topic, after year, min citations",
+    "prompt": "I need a paper about using large language models for automated program repair, published after 2021, with at least 50 citations.",
+    "year": {"operator": "after", "year": 2021},
+    "citations": {"operator": "at_least", "value": 50},
+    "expect_found": true
+  },
+  {
+    "id": 5,
+    "category": "narrow topic, from year, min citations",
+    "prompt": "Find a paper on federated learning for medical imaging published in 2020 or later with at least 100 citations.",
+    "year": {"operator": "from", "year": 2020},
+    "citations": {"operator": "at_least", "value": 100},
+    "expect_found": true
+  },
+  {
+    "id": 6,
+    "category": "broad topic, before year, high citations",
+    "prompt": "Find a reinforcement learning paper published before 2015 with more than 5000 citations.",
+    "year": {"operator": "before", "year": 2015},
+    "citations": {"operator": "more_than", "value": 5000},
+    "expect_found": true
+  },
+  {
+    "id": 7,
+    "category": "exact year, max citations",
+    "prompt": "Find a paper about prompt injection attacks on LLM agents, published in 2024, with fewer than 50 citations.",
+    "year": {"operator": "in", "year": 2024},
+    "citations": {"operator": "less_than", "value": 50},
+    "expect_found": true
+  },
+  {
+    "id": 8,
+    "category": "approximate citations",
+    "prompt": "Find a paper about vision transformers with around 1000 citations.",
+    "year": null,
+    "citations": {"operator": "approximately", "value": 1000},
+    "expect_found": true
+  },
+  {
+    "id": 9,
+    "category": "no good paper (impossible constraints)",
+    "prompt": "Find a paper about retrieval-augmented generation published in 2015 with more than 10000 citations.",
+    "year": {"operator": "in", "year": 2015},
+    "citations": {"operator": "more_than", "value": 10000},
+    "expect_found": false
+  },
+  {
+    "id": 10,
+    "category": "no good paper (too specific)",
+    "prompt": "Find a paper about quantum computing for tool use in LLM agents, published after 2023, with at least 1000 citations.",
+    "year": {"operator": "after", "year": 2023},
+    "citations": {"operator": "at_least", "value": 1000},
+    "expect_found": false
+  },
+  {
+    "id": 11,
+    "category": "ambiguous (recent)",
+    "prompt": "Find a recent paper about AI agents using tools and explain whether it would be useful for someone building autonomous software agents.",
+    "year": {"operator": "from", "year": 2023},
+    "citations": null,
+    "expect_found": true
+  },
+  {
+    "id": 12,
+    "category": "ambiguous (vague topic, no constraints)",
+    "prompt": "Give me a good paper about transformers.",
+    "year": null,
+    "citations": null,
+    "expect_found": true
+  },
+  {
+    "id": 13,
+    "category": "ambiguous (older, influential)",
+    "prompt": "Find an influential older paper on word embeddings.",
+    "year": null,
+    "citations": null,
+    "expect_found": true
+  }
+]

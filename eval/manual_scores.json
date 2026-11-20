@@ -1,0 +1,67 @@
+{
+  "1": {
+    "relevant": true,
+    "explanation": false,
+    "note": "Relevant to LLMs for software engineering, but the paper (Agentless) argues that complex agents are not needed. The explanation presents it as an examination of agent architectures and misses the main point."
+  },
+  "2": {
+    "relevant": true,
+    "explanation": true,
+    "note": "The original RAG paper. Summary is accurate and six sentences, as asked."
+  },
+  "3": {
+    "relevant": true,
+    "explanation": true,
+    "note": "A spatial-temporal GNN paper, so it fits, but it is a narrow application and not the most obvious 2019 GNN paper. Explanation is correct but short."
+  },
+  "4": {
+    "relevant": true,
+    "explanation": true,
+    "note": "Directly on LLM-based program repair. Explanation matches the abstract."
+  },
+  "5": {
+    "relevant": true,
+    "explanation": true,
+    "note": "Overview of federated and privacy-preserving learning in medical imaging. Explanation is mostly faithful, but calls it a foundational study and overstates the role of DICOM."
+  },
+  "6": {
+    "relevant": true,
+    "explanation": true,
+    "note": "DQN, a landmark paper. Explanation is accurate."
+  },
+  "7": {
+    "relevant": true,
+    "explanation": true,
+    "note": "Exactly on topic, although it is a short workshop-style paper."
+  },
+  "8": {
+    "relevant": true,
+    "explanation": true,
+    "note": "Vision transformer architecture paper with 986 citations. Explanation is correct but brief."
+  },
+  "9": {
+    "relevant": null,
+    "explanation": true,
+    "note": "Correctly returns no paper and gives the right reason (RAG became common around 2020)."
+  },
+  "10": {
+    "relevant": null,
+    "explanation": true,
+    "note": "Correctly returns no paper and explains which part of the request could not be met."
+  },
+  "11": {
+    "relevant": false,
+    "explanation": false,
+    "note": "Same paper as #1. It is about avoiding tool-using agents, so the claim that it explains how agents use tools is wrong. It could still be useful as a counterpoint, but the agent does not say that."
+  },
+  "12": {
+    "relevant": true,
+    "explanation": true,
+    "note": "Attention Is All You Need. Reasonable choice for a vague request."
+  },
+  "13": {
+    "relevant": true,
+    "explanation": true,
+    "note": "Turian et al. 2010 is an influential early word embedding paper. word2vec (2013) would be the more obvious pick."
+  }
+}

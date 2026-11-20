@@ -1,0 +1,508 @@
+[
+  {
+    "id": 1,
+    "answer": {
+      "paper": {
+        "title": "Demystifying LLM-Based Software Engineering Agents",
+        "authors": [
+          "Chunqiu Steven Xia",
+          "Yinlin Deng",
+          "Soren Dunn",
+          "Lingming Zhang"
+        ],
+        "year": 2025,
+        "citation_count": 1058,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W4411449940",
+        "link": "https://doi.org/10.1145/3715754"
+      },
+      "explanation": "This paper, titled 'Demystifying LLM-Based Software Engineering Agents', provides a comprehensive examination of autonomous large language model agents designed for software development tasks such as code synthesis, program repair, and test generation. Published after 2022 and boasting over 1,000 citations, it directly addresses the core concepts of agentic workflows in software engineering, including tool usage, environment feedback, and action planning. Its high citation count and thorough analysis of current agent-based approaches make it exceptionally relevant and impactful for researchers and practitioners in this domain.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "LLM agents for software engineering",
+        "year": {
+          "operator": "after",
+          "year": 2022
+        },
+        "citations": {
+          "operator": "at_least",
+          "value": 100
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 2,
+    "answer": {
+      "paper": {
+        "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+        "authors": [
+          "Patrick Lewis",
+          "Ethan Perez",
+          "Aleksandra Piktus",
+          "Fabio Petroni",
+          "Vladimir Karpukhin",
+          "Naman Goyal",
+          "Heinrich Küttler",
+          "Mike Lewis",
+          "Wen-tau Yih",
+          "Tim Rocktäschel",
+          "Sebastian Riedel",
+          "Douwe Kiela"
+        ],
+        "year": 2020,
+        "citation_count": 19229,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W3098425262",
+        "link": "https://discovery.ucl.ac.uk/id/eprint/10100504/"
+      },
+      "explanation": "This seminal paper introduces Retrieval-Augmented Generation (RAG), a general-purpose fine-tuning recipe for combining pre-trained parametric language models with non-parametric memory accessed via a retriever. It demonstrates that large language models often struggle with knowledge-intensive tasks because storing all factual knowledge solely within model parameters limits precision, explainability, and updates. To address this, the authors combine a pre-trained seq2seq model with a dense passage retriever that fetches relevant external documents. This hybrid architecture generates responses by conditioning on both the internal parametric knowledge and the retrieved external context. The approach achieves state-of-the-art results across various knowledge-intensive natural language processing benchmarks, outperforming standard parametric-only models. Furthermore, it provides better interpretability and provenance by allowing inspection of the retrieved supporting evidence.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "retrieval-augmented generation",
+        "year": {
+          "operator": "before",
+          "year": 2021
+        },
+        "citations": {
+          "operator": "more_than",
+          "value": 500
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 3,
+    "answer": {
+      "paper": {
+        "title": "Graph WaveNet for Deep Spatial-Temporal Graph Modeling",
+        "authors": [
+          "Zonghan Wu",
+          "Shirui Pan",
+          "Guodong Long",
+          "Jing Bo Jiang",
+          "Chengqi Zhang"
+        ],
+        "year": 2019,
+        "citation_count": 4548,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W2965341826",
+        "link": "https://doi.org/10.24963/ijcai.2019/264"
+      },
+      "explanation": "This paper, 'Graph WaveNet for Deep Spatial-Temporal Graph Modeling' published in 2019, introduces an innovative approach to spatial-temporal graph modeling by addressing limitations of fixed graph structures and effectively capturing temporal trends. It is highly influential in the field of graph neural networks, with over 4,500 citations.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "graph neural networks",
+        "year": {
+          "operator": "in",
+          "year": 2019
+        },
+        "citations": {
+          "operator": "at_least",
+          "value": 1000
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 4,
+    "answer": {
+      "paper": {
+        "title": "Automated Program Repair in the Era of Large Pre-trained Language Models",
+        "authors": [
+          "Chunqiu Steven Xia",
+          "Yuxiang Wei",
+          "Lingming Zhang"
+        ],
+        "year": 2023,
+        "citation_count": 887,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W4384345708",
+        "link": "https://doi.org/10.1109/icse48619.2023.00129"
+      },
+      "explanation": "This highly cited paper provides a comprehensive overview of automated program repair in the era of large pre-trained language models. It examines how large language models help overcome the limitations of traditional and learning-based APR techniques, specifically addressing issues of patch variety and complicated bugs. Published after 2021 with hundreds of citations, it directly addresses the user's requirements for research on LLM-based automated program repair.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "large language models for automated program repair",
+        "year": {
+          "operator": "after",
+          "year": 2021
+        },
+        "citations": {
+          "operator": "at_least",
+          "value": 50
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 5,
+    "answer": {
+      "paper": {
+        "title": "Secure, privacy-preserving and federated machine learning in medical imaging",
+        "authors": [
+          "Georgios A. Kaissis",
+          "Marcus R. Makowski",
+          "Daniel Rueckert",
+          "Rickmer Braren"
+        ],
+        "year": 2020,
+        "citation_count": 2082,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W3033511014",
+        "link": "https://doi.org/10.1038/s42256-020-0186-1"
+      },
+      "explanation": "This paper (OpenAlex ID W3033511014) is a highly influential and widely cited foundational study (over 2,000 citations) published in 2020 that addresses secure, privacy-preserving, and federated machine learning in medical imaging. It discusses how federated learning overcomes the barriers of limited dataset availability and strict privacy regulations (such as patient confidentiality and legal requirements) in healthcare and medical imaging. The article highlights how standardized data exchange formats (like DICOM) combine with privacy-preserving distributed training frameworks to enable collaborative model development across institutions without centralizing sensitive patient data.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "federated learning for medical imaging",
+        "year": {
+          "operator": "from",
+          "year": 2020
+        },
+        "citations": {
+          "operator": "at_least",
+          "value": 100
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 6,
+    "answer": {
+      "paper": {
+        "title": "Playing Atari with Deep Reinforcement Learning",
+        "authors": [
+          "Volodymyr Mnih",
+          "Koray Kavukcuoglu",
+          "David Silver",
+          "Alex Graves",
+          "Ioannis Antonoglou",
+          "Daan Wierstra",
+          "Martin Riedmiller"
+        ],
+        "year": 2013,
+        "citation_count": 17230,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W1757796397",
+        "link": "https://doi.org/10.48550/arxiv.1312.5602"
+      },
+      "explanation": "This landmark paper introduces Deep Q-Networks (DQN), presenting the first deep learning model to successfully learn control policies directly from high-dimensional sensory input (raw pixels) using reinforcement learning. Published in 2013 (before the 2015 threshold) and boasting over 17,000 citations, it bridges deep learning and reinforcement learning, achieving human-level or superior performance on several Atari 2600 games.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "reinforcement learning",
+        "year": {
+          "operator": "before",
+          "year": 2015
+        },
+        "citations": {
+          "operator": "more_than",
+          "value": 5000
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 7,
+    "answer": {
+      "paper": {
+        "title": "[Short Paper] Forensic Analysis of Indirect Prompt Injection Attacks on LLM Agents",
+        "authors": [
+          "Maxim Chernyshev",
+          "Zubair Ahmed Baig",
+          "Robin Doss"
+        ],
+        "year": 2024,
+        "citation_count": 16,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W4406460287",
+        "link": "https://doi.org/10.1109/tps-isa62245.2024.00053"
+      },
+      "explanation": "This paper directly addresses indirect prompt injection attacks on large language model (LLM) agents and proposes a digital forensic analysis framework to identify such attacks using execution logs. Published in 2024, it currently has 16 citations, satisfying the requirement of fewer than 50 citations.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "prompt injection attacks on LLM agents",
+        "year": {
+          "operator": "in",
+          "year": 2024
+        },
+        "citations": {
+          "operator": "less_than",
+          "value": 50
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 8,
+    "answer": {
+      "paper": {
+        "title": "Rethinking Spatial Dimensions of Vision Transformers",
+        "authors": [
+          "Byeongho Heo",
+          "Sangdoo Yun",
+          "Dongyoon Han",
+          "Sanghyuk Chun",
+          "Junsuk Choe",
+          "Seong Joon Oh"
+        ],
+        "year": 2021,
+        "citation_count": 986,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W3202715235",
+        "link": "https://doi.org/10.1109/iccv48922.2021.01172"
+      },
+      "explanation": "This paper, titled \"Rethinking Spatial Dimensions of Vision Transformers\", investigates the design principles of vision transformers and the role of spatial dimension conversion, closely matching the user's request with a citation count very close to 1,000 (986 citations).",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "vision transformers",
+        "year": null,
+        "citations": {
+          "operator": "approximately",
+          "value": 1000
+        },
+        "assumptions": []
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "citations": true,
+      "source": true
+    }
+  },
+  {
+    "id": 9,
+    "answer": {
+      "paper": null,
+      "explanation": "No paper about retrieval-augmented generation published in 2015 with more than 10,000 citations could be found in OpenAlex, as the term and paradigm of retrieval-augmented generation (RAG) became prominent much later (around 2020).",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "retrieval-augmented generation",
+        "year": {
+          "operator": "in",
+          "year": 2015
+        },
+        "citations": {
+          "operator": "more_than",
+          "value": 10000
+        },
+        "assumptions": []
+      },
+      "tool_calls": 4
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true
+    }
+  },
+  {
+    "id": 10,
+    "answer": {
+      "paper": null,
+      "explanation": "No paper was found that specifically combines quantum computing with tool use in LLM agents and meets the criteria of being published after 2023 with at least 1000 citations. While highly cited post-2023 papers exist in quantum computing (such as software frameworks like Qiskit or quantum error correction papers), none address LLM agents or tool use.",
+      "uncertainty": "The intersection of quantum computing, tool use, and LLM agents is an extremely niche or non-existent research area for papers with over 1000 citations published after 2023.",
+      "constraints": {
+        "topic": "quantum computing for tool use in LLM agents",
+        "year": {
+          "operator": "after",
+          "year": 2023
+        },
+        "citations": {
+          "operator": "at_least",
+          "value": 1000
+        },
+        "assumptions": [
+          "'after 2023' interpreted as year > 2023 (operator after, year 2023)",
+          "'at least 1000 citations' interpreted as at_least 1000"
+        ]
+      },
+      "tool_calls": 3
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true
+    }
+  },
+  {
+    "id": 11,
+    "answer": {
+      "paper": {
+        "title": "Demystifying LLM-Based Software Engineering Agents",
+        "authors": [
+          "Chunqiu Steven Xia",
+          "Yinlin Deng",
+          "Soren Dunn",
+          "Lingming Zhang"
+        ],
+        "year": 2025,
+        "citation_count": 1058,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W4411449940",
+        "link": "https://doi.org/10.1145/3715754"
+      },
+      "explanation": "This paper is extremely useful for someone building autonomous software agents because it directly demystifies end-to-end LLM-based software engineering agents. It breaks down how these agents are equipped with the ability to use tools, execute shell commands, observe environmental feedback, and formulate long-horizon plans. By examining current agent architectures and analyzing their practical complexities and limitations, the paper provides critical insights for developers seeking to build robust software engineering agents that can reliably navigate codebases and interact with development tools.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "AI agents tool use",
+        "year": {
+          "operator": "from",
+          "year": 2023
+        },
+        "citations": null,
+        "assumptions": [
+          "'recent' means published from 2023 onwards (2023-2026)"
+        ]
+      },
+      "tool_calls": 2
+    },
+    "checks": {
+      "outcome": true,
+      "parsed": true,
+      "year": true,
+      "source": true
+    }
+  },
+  {
+    "id": 12,
+    "answer": {
+      "paper": {
+        "title": "Attention Is All You Need",
+        "authors": [
+          "Ashish Vaswani",
+          "Noam Shazeer",
+          "Niki Parmar",
+          "Jakob Uszkoreit",
+          "Llion Jones",
+          "Aidan N. Gomez",
+          "Łukasz Kaiser",
+          "Illia Polosukhin"
+        ],
+        "year": 2017,
+        "citation_count": 151778,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W2626778328",
+        "link": "https://doi.org/10.48550/arxiv.1706.03762"
+      },
+      "explanation": "This foundational paper introduces the Transformer architecture, which replaces traditional recurrent and convolutional neural networks with a novel network based solely on attention mechanisms. It demonstrates superior translation quality while enabling significantly greater parallelization and reduced training time. With over 150,000 citations, it is universally recognized as the landmark paper that revolutionized natural language processing and deep learning as a whole.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "transformers attention is all you need",
+        "year": null,
+        "citations": {
+          "operator": "more_than",
+          "value": 10000
+        },
+        "assumptions": [
+          "'good paper' interpreted as highly cited and influential work"
+        ]
+      },
+      "tool_calls": 1
+    },
+    "checks": {
+      "outcome": true,
+      "source": true
+    }
+  },
+  {
+    "id": 13,
+    "answer": {
+      "paper": {
+        "title": "Word Representations: A Simple and General Method for Semi-Supervised Learning",
+        "authors": [
+          "Joseph P. Turian",
+          "Lev Ratinov",
+          "Yoshua Bengio"
+        ],
+        "year": 2010,
+        "citation_count": 2392,
+        "citation_source": "OpenAlex",
+        "citation_source_url": "https://openalex.org/W2158139315",
+        "link": "http://anthology.aclweb.org/P/P10/P10-1040.pdf"
+      },
+      "explanation": "This 2010 paper evaluates different types of unsupervised word embeddings (including Brown clusters, Collobert & Weston embeddings, and HLBL embeddings) as extra word features to improve accuracy in supervised NLP tasks such as named entity recognition and chunking. It represents an influential early study establishing the utility of word embeddings across various natural language processing applications.",
+      "uncertainty": null,
+      "constraints": {
+        "topic": "word embeddings",
+        "year": {
+          "operator": "before",
+          "year": 2015
+        },
+        "citations": {
+          "operator": "more_than",
+          "value": 1000
+        },
+        "assumptions": []
+      },
+      "tool_calls": 4
+    },
+    "checks": {
+      "outcome": true,
+      "source": true
+    }
+  }
+]
